@@ -1,11 +1,17 @@
 # Java Database Connectivity 
 - JDBC - stands for Java database Connectivity  
-- it is an external, relatively low level API provided by Java 
+- it is a part of the Java Standard Edition (Java SE) included in JDK, relatively low level API provided by Java.
+- it is located in the java.sql and javax.sql package.
 - serves as an interface for connecting java applications to a database via SQL.
 - JDBC provides methods to query and update data in a database, making it key component for database interaction in java applications.
 ## Steps for using the JDBC 
 - In order to interact with a database, we have to follow the following steps 
 1. obtain a JDBC driver
+    - it is a software component (JAR file/dependency) that enables java applications to interact with a database.
+    - it acts as a bridge between the java application and the specific database vendor.
+    - it is vendor specific and must be compatible with the database being used.
+    - it is a jar file that contains the classes and methods needed to connect to the database.
+    - JDBC provides a set of standard interfaces to connect a Java application to a database. Since each database is vendor-specific, the implementation of these interfaces is provided by the vendor through a JDBC driver, not by the DBMS itself.
 2. Establish a connection using <br>
     i. Database URL<br>
     ii. Username <br>
@@ -60,7 +66,7 @@
     ```
     public class ConnectionUtil {
 
-        private static String DB_URL = "jdbc:h2:mem:testdb";
+        private static String DB_URL = "jdbc:h2:mem:testdb"; 
         private static String USERNAME = "sa";
         private static String PASSWORD = "pass";
 
@@ -77,6 +83,7 @@
         }
         
     }
+    // the database url includes the jdbc:database type(h2)://host:port/databaseName 
     ```
     ## How it works?
     - when the application starts, a pool of connections is created instead of creating a new connection every time a query is made.
@@ -108,6 +115,7 @@
         - example
         ```
         Statement statement = connection.createStatement ();
+        // we can't use new keyword to create a statement object because it is an interface. Instead we use the createStatement() method of the connection object.
          
         ``` 
         2. PreparedStatement 
@@ -117,8 +125,9 @@
         - the parameters are passed to the SQL command at runtime.
         - advantages 
             - SQL injection protection - inputs are not interpreted as a part of the SQL command.
-            - Performance - the database engine can reuse the query plan.
-            - Readability - no messy string concatenation.  
+            - Performance - the database engine can reuse the query plan by just changing the parameters on top of the precompiled SQL command.
+            - Reusability - the same SQL command can be reused with different parameters.
+            - Readability - no messy string concatenation. (String sql = "insert into student values ("+ sid + ", '" + sname + "', " + marks + ")";) 
         example
         ```
         String query = "select * from users where username = ? and password = ?";
@@ -135,6 +144,9 @@
 
         */  
         ```
+        ## Note 
+        - **In JDBC, with Statement, the full SQL query (with values) is added during the execution step using executeQuery() or executeUpdate(). With PreparedStatement, the SQL query (with placeholders) is added during the creation step via prepareStatement(), and parameter values are set in a separate binding step using setXXX() methods before execution.**
+
         3. using CallableStatement
         - it is an interface that is used to execute **stored procedures** and return a result against a database.
         - the SQL command is not hard coded and can be changed at runtime.
@@ -178,7 +190,10 @@
     - the result set object is created by executing a SELECT statement using the executeQuery() method.
     - the result set object is used to retrieve the data returned by the SQL statement.
     - some of the methods provided by the result set object are:
-        1. next() - moves the cursor to the next row in the result set.
+        1. next() - moves the cursor to the next row in the result set. Provides a boolean value indicating if there is a next row.
+        - the initial position of the cursor is before the first row.
+        - the next() method moves the cursor to the next row in the result set and returns a boolean value indicating if there is a next row.
+
         2. getString() - retrieves the value of a column in the current row as a string.
         3. getInt() - retrieves the value of a column in the current row as an integer.
         4. getDouble() - retrieves the value of a column in the current row as a double.
@@ -197,6 +212,33 @@
         ```
         - the above code retrieves the data returned by the SQL statement and prints it to the console.
 
+        ```
+        // These is how we handle the result set if the table/the number of columns are not known 
+        // 3. Query the table
+            ResultSet rs = stmt.executeQuery("SELECT * FROM employee");
+            ResultSetMetaData metaData = rs.getMetaData();    // ResultSetMetaData is an interface that provides information about the types and properties of the columns in a ResultSet object.
+
+            int columnCount = metaData.getColumnCount();  // Get the number of columns in the table for iteration purpose.
+
+            // 4. Print column names
+            System.out.println("Table Columns:");
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnName(i);
+                String columnType = metaData.getColumnTypeName(i);
+                System.out.println("- " + columnName + " (" + columnType + ")");
+            }
+
+            System.out.println("\nData:");
+            // 5. Iterate through rows
+            while (rs.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    Object value = rs.getObject(i); // Dynamic type
+                    System.out.print(value + "\t");
+                }
+                System.out.println();
+            }
+        ```
+
     6. Close the connection
     - once the SQL statement is executed and the result is retrieved, we can close the connection using the close() method of the connection object.
     - this method closes the connection to the database and releases any resources associated with it.
@@ -212,6 +254,6 @@
     ```
     - the connection pool will manage the connections and close them when they are no longer needed.
 
-    
+
        
 
