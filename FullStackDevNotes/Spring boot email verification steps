@@ -1,0 +1,39 @@
+# Spring Boot email verification steps 
+## Step 1: Add maven Dependencies 
+- this dependencies are required to send emails using spring boot.
+- this dependencies includes
+    - spring-boot-starter-mail - used java mail sender
+    - commons-lang3 - used to generate random tokens
+## step 2: create a secure token model
+- this model is used to store the token and its expiration time.
+- this model has the following fields.
+    1. id (UUID)
+    2. token (String)
+    3. createdAt (LocalDateTime)
+    4. expiresAt (LocalDateTime)
+    5. user (User)  -> one to one relationship with user model
+    6. isExpired (boolean)
+
+## step 3 : update a user model
+- add a new field called "isAccountVerified" to the user model.
+- add a new field called "isLoginDisabled" to the user model.
+- set a secure token to the user model.
+- make a user model extend Auditable (optional) - this is used to track the created and updated date of the user model.
+
+## step 4: set up mailing package and create the following
+- AbstractEmailContext(an abstract class whose constructor returns a hashmap of email properties)
+- Account verification email context - extends the AbstractEmailContext 
+- EmailService interface (declares sendEmail() method)
+- DefaultEmailService (implements the EmailService and sendEmail() method)
+    - thymeleaf is used to generate dynamic HTML content in spring boot application.
+        - used springTemplateEngine 
+
+## step 5: create the secure token repository and service
+- set up a secure token repository which should contain findByToken() and removeToken() methods.
+- create a secure token service interface which would expose the CRUD secure token operations.
+- create the default secure token service (implements the secure token service and implement the methods).
+
+## step 6: update UserRepository, Service and Controller
+- nothing to update in my UserDAO (because i already have findByEmail() method)
+- in service layer  - write a sendRegistrationConfirmationEmail() method.
+                    - 

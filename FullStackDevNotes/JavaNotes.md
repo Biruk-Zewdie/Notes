@@ -1,4 +1,22 @@
 # Java Interview Practice Note
+## static keyword in Java
+- can be used with members of a class variables, methods, blocks and nested class.
+- to be associated with the class rather than with instance of a class.
+- saves memory by sharing a single variable across all instance of a class.
+- static methods can not access non static/ instance variables or methods directly. It can only use static variables and other non-static methods.
+```
+class Example {
+    int x = 5;
+    static void show() {
+        Example obj = new Example();
+        System.out.println(obj.x); // Correct: Access through object
+    }
+}
+```
+- static methods are called without creating an object, making them efficient for utility methods. 
+- The **static blocks** is used to initializing a static variables before the main method runs. It executes only once when the class is loaded into memory. 
+-  Useful for one-time initialization before the main method runs.
+- A static nested class is a class defined inside another class using static. It does not need an instance of the outer class to be used.
 ## Non access modifiers 
 - Non access modifiers are modifiers that define the behavior, properties, lifecycle of a variable, methods and classes.
 - this includes: 
@@ -152,7 +170,7 @@
 
 ## what is the difference between final, finally and finalize?
 - final - a non access modifier that is used to make fields/variables constant. Restricts modification in variables, methods (restrict overriding) and classes (restrict inheritance). 
-- finally - is a block in exception handling, which cleans up our code or everything in our finally block will be executed after a try-catch.
+- finally - is a block in exception handling, which cleans up our code or everything in our finally block will be always executed after a try-catch.
 - finalize - a protected method in Object class that garbage collectors call on an object when it determines that the are no more references to the object.
     - it allows the object to perform clean up actions before being garbage collected. 
 
@@ -248,7 +266,7 @@
 - Multiple things happen at the same time (run parallelly), with the help of threads. Example video games.
 - In order to achieve simultaneous execution of a program, We have to create multiple threads and this can be achieved by 
     1. implementing the runnable interface
-        - runnable class is a functional interface which only contains run method.
+        - runnable interface is a functional interface which only contains run method.
         - The main advantage of implementing the Runnable interface instead of extending the Thread class is that it allows a class to extend another class as well.
         - Since Java does not support multiple inheritance with classes, extending Thread would prevent you from extending any other class.
         - By implementing Runnable, you maintain the flexibility to inherit from another class while still enabling multithreaded behavior.
